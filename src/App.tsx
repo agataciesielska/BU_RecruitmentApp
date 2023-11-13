@@ -1,33 +1,43 @@
 import { useState } from "react";
 import "./App.css";
 
-const GUESTS = [23, 45, 155, 374, 22, 99, 100, 101, 115, 209];
+const guests = [23, 45, 155, 374, 22, 99, 100, 101, 115, 209];
 
 function calculateOccupancy(premiumRooms: any, economyRooms: any) {
-  const sortedGuests = [...GUESTS].sort((a, b) => b - a);
+  const sortedGuests = [...guests].sort((a, b) => b - a);
+  const economyGuestsNumber = guests.filter(v => +v < 100).length
+
   let premiumOccupancy = 0;
   let economyOccupancy = 0;
   let premiumRevenue = 0;
   let economyRevenue = 0;
+  let economyGuests = economyGuestsNumber
+  let upgradesLeft = 1
 
   for (const guest of sortedGuests) {
-    if (guest >= 100) {
-      continue;
-    }
-
-    if (premiumRooms > 0) {
+    if (guest >= 100 && premiumRooms > 0) {
       premiumOccupancy++;
       premiumRevenue += guest;
       premiumRooms--;
-    } else if (economyRooms > 0) {
-      economyOccupancy++;
-      economyRevenue += guest;
-      economyRooms--;
+    }
+    else if (guest < 100) {
+      if (economyGuests > economyRooms && upgradesLeft > 0 && premiumRooms > 0) {
+        premiumOccupancy++;
+        premiumRevenue += guest;
+        premiumRooms--;
+        economyGuests--;
+        upgradesLeft--;
+      }
+      else if (economyRooms > 0) {
+        economyOccupancy++;
+        economyRevenue += guest;
+        economyRooms--;
+        economyGuests--;
+      }
     } else {
-      break;
+      continue;
     }
   }
-
   return {
     premiumOccupancy,
     economyOccupancy,
@@ -52,7 +62,7 @@ function App() {
       <div className="main">
         <form onSubmit={handleSubmit}>
           <div>
-            <p>Premium Rooms:</p>
+            <p>Free Premium Rooms:</p>
             <input
               type="number"
               value={premiumRooms}
@@ -63,7 +73,7 @@ function App() {
           </div>
           <br />
           <div>
-            <p>Economy Rooms:</p>
+            <p>Free Economy Rooms:</p>
             <input
               type="number"
               value={economyRooms}
@@ -77,12 +87,6 @@ function App() {
         </form>
         {occupancy && (
           <div>
-            <p>
-              Free Premium rooms: {premiumRooms - occupancy.premiumOccupancy}
-            </p>
-            <p>
-              Free Economy rooms: {economyRooms - occupancy.economyOccupancy}
-            </p>
             <p>
               Usage Premium: {occupancy.premiumOccupancy} (EUR{" "}
               {occupancy.premiumRevenue})

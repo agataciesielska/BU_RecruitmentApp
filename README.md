@@ -31,4 +31,5 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ### Solution for task
 
-To calculate the occupancy, we can sort the potential guests in descending order of their willingness to pay, and then loop through them. For each guest, we check if they are willing to pay more than EUR 100, and if so, we skip them. If they are willing to pay less than EUR 100 and there are available Premium rooms, we assign them a Premium room. Otherwise, we assign them an Economy room. We continue until there are no more available rooms.
+To calculate the occupancy, we can sort the potential guests in descending order of their willingness to pay, and then loop through them. For each guest, we check if they are willing to pay more than EUR 100, and if so, we assign them to premium room, if such room is avaiable. If they are willing to pay less than EUR 100 and there are available Premium rooms, we assign them a Premium room (upgradesLeft variable present how many upgrades is left). 
+Lastly, we assign guests that can pay less than EUR 100 to an Economy room, if such room is avaiable.
